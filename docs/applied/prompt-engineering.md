@@ -1,3 +1,11 @@
+---
+title: 提示工程 (Prompt Engineering)
+description: 提示工程是与 LLM 高效交互的艺术和科学。通过精心设计的提示，可以在不修改模型的情况下极大提升输出质量。
+created: 2026-04-07
+updated: 2026-04-07
+tags: [prompt-engineering, cot, few-shot, dspy]
+---
+
 # 提示工程 (Prompt Engineering)
 
 > 提示工程是与 LLM 高效交互的艺术和科学。通过精心设计的提示，可以在不修改模型的情况下极大提升输出质量。

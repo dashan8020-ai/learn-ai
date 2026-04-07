@@ -1,3 +1,11 @@
+---
+title: "大语言模型 (Large Language Models)"
+description: "大语言模型是当前 AI 革命的核心驱动力。本文档系统梳理 LLM 的关键技术、主流模型和发展趋势。"
+created: 2026-04-07
+updated: 2026-04-07
+tags: [llm, transformer, scaling-laws, attention, moe]
+---
+
 # 大语言模型 (Large Language Models)
 
 > 大语言模型是当前 AI 革命的核心驱动力。本文档系统梳理 LLM 的关键技术、主流模型和发展趋势。

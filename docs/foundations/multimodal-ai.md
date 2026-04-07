@@ -1,3 +1,11 @@
+---
+title: "多模态 AI (Multimodal AI)"
+description: "多模态 AI 是将文本、图像、音频、视频等多种信息形式统一理解和生成的技术。它代表了 AI 从单一文本走向全面感知的进化方向。"
+created: 2026-04-07
+updated: 2026-04-07
+tags: [multimodal, vision-language, diffusion, video-generation, world-models]
+---
+
 # 多模态 AI (Multimodal AI)
 
 > 多模态 AI 是将文本、图像、音频、视频等多种信息形式统一理解和生成的技术。它代表了 AI 从单一文本走向全面感知的进化方向。

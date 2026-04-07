@@ -1,3 +1,11 @@
+---
+title: 检索增强生成 (RAG - Retrieval-Augmented Generation)
+description: RAG 通过将外部知识检索与大语言模型结合，解决了 LLM 知识截止和幻觉问题，是企业级 AI 应用的核心架构之一。
+created: 2026-04-07
+updated: 2026-04-07
+tags: [rag, vector-database, embedding, retrieval, graphrag]
+---
+
 # 检索增强生成 (RAG - Retrieval-Augmented Generation)
 
 > RAG 通过将外部知识检索与大语言模型结合，解决了 LLM 知识截止和幻觉问题，是企业级 AI 应用的核心架构之一。

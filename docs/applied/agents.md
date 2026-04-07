@@ -1,3 +1,11 @@
+---
+title: AI Agent 智能体
+description: AI Agent 是 2024-2026 年最热门的 AI 方向之一。从简单的聊天机器人进化为能够自主规划、使用工具、执行复杂任务的智能体。
+created: 2026-04-07
+updated: 2026-04-07
+tags: [agents, react, mcp, a2a, code-agents, multi-agent]
+---
+
 # AI Agent 智能体
 
 > AI Agent 是 2024-2026 年最热门的 AI 方向之一。从简单的聊天机器人进化为能够自主规划、使用工具、执行复杂任务的智能体。

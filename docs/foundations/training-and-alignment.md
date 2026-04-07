@@ -1,3 +1,11 @@
+---
+title: "微调与对齐 (Fine-tuning & Alignment)"
+description: "微调让通用模型适配特定任务，对齐确保模型行为符合人类价值观。这是从预训练到可用产品的关键环节。"
+created: 2026-04-07
+updated: 2026-04-07
+tags: [fine-tuning, alignment, lora, rlhf, dpo, constitutional-ai]
+---
+
 # 微调与对齐 (Fine-tuning & Alignment)
 
 > 微调让通用模型适配特定任务，对齐确保模型行为符合人类价值观。这是从预训练到可用产品的关键环节。
