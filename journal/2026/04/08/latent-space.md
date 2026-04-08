@@ -11,3 +11,5 @@ category: 社区
   https://www.latent.space/p/ainews-anthropic-30b-arr-project
 - **Extreme Harness Engineering for Token Billionaires: 1M LOC, 1B toks/day, 0% human code, 0% human review — Ryan Lopopolo, OpenAI Frontier & Symphony** — We shed light on OpenAI's first Dark Factory for the first time.  
   https://www.latent.space/p/harness-eng
+- **[AINews] Gemma 4 crosses 2 million downloads** — a quiet day lets us give due respect to the enormously successful Gemma 4 launch  
+  https://www.latent.space/p/ainews-gemma-4-crosses-2-million

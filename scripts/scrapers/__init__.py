@@ -6,13 +6,15 @@ scrapers — 每个网站一个独立爬虫模块。
     SLUG: str       — 输出文件名（不含 .md）
     CATEGORY: str   — 分类 key（industry / community / …）
 
-    def scrape() -> list[dict]
+    def scrape(since=None) -> list[dict]
         返回条目列表，每个 dict 包含:
             title, link, summary, source, slug, cat
+        since: 可选，datetime，只返回该时间之后的文章
 """
 
 from __future__ import annotations
 
+import datetime as dt
 import importlib
 import pkgutil
 from typing import TYPE_CHECKING
@@ -40,10 +42,11 @@ def get(slug: str) -> "ModuleType | None":
     return _discover().get(slug)
 
 
-def run_scraper(cfg: dict) -> list[dict]:
+def run_scraper(cfg: dict, since: dt.datetime | None = None) -> list[dict]:
     """根据 feeds.yaml 中的 scrape 条目调用对应爬虫。
 
     cfg 至少包含: name, slug, cat
+    since: 可选，只返回该时间之后的文章
     """
     slug = cfg["slug"]
     mod = get(slug)
@@ -51,7 +54,7 @@ def run_scraper(cfg: dict) -> list[dict]:
         print(f"  [WARN] 未找到爬虫模块: scrapers/{slug}.py")
         return []
     try:
-        return mod.scrape()
+        return mod.scrape(since=since)
     except Exception as exc:
         print(f"[WARN] {exc}")
         return []

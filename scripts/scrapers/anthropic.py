@@ -2,15 +2,16 @@
 anthropic.py — 爬取 Anthropic News 页面。
 
 目标页面: https://www.anthropic.com/news
-提取所有 /news/<slug> 格式的文章链接。
+提取所有 /news/<slug> 格式的文章链接，支持按日期增量过滤。
 """
 
 from __future__ import annotations
 
+import datetime as dt
 import re
 
 import httpx
-from bs4 import BeautifulSoup
+from bs4 import BeautifulSoup, Tag
 
 NAME = "Anthropic"
 SLUG = "anthropic"
@@ -18,19 +19,55 @@ CATEGORY = "industry"
 
 _URL = "https://www.anthropic.com/news"
 _LINK_RE = re.compile(r"^/news/[\w-]+$")
-_CTA_RE = re.compile(r"^(Read more|Learn more|See more|View more|View)$", re.IGNORECASE)
+_CTA_RE = re.compile(
+    r"^(Read more|Learn more|See more|View more|View)$", re.IGNORECASE
+)
+_DATE_RE = re.compile(
+    r"((?:January|February|March|April|May|June|July|August|September"
+    r"|October|November|December|Jan|Feb|Mar|Apr|Jun|Jul|Aug|Sep|Oct"
+    r"|Nov|Dec)\s+\d{1,2},?\s+\d{4})"
+)
+_DATE_FMTS = ("%B %d, %Y", "%B %d %Y", "%b %d, %Y", "%b %d %Y")
 _HEADERS = {"User-Agent": "Mozilla/5.0 learn-ai-bot"}
 
 
-def scrape() -> list[dict]:
-    """爬取 Anthropic News，返回条目列表。"""
+def _parse_date(text: str) -> dt.datetime | None:
+    """尝试多种格式解析日期文本。"""
+    for fmt in _DATE_FMTS:
+        try:
+            return dt.datetime.strptime(text, fmt)
+        except ValueError:
+            continue
+    return None
+
+
+def _find_date_near(a_tag: Tag) -> dt.datetime | None:
+    """从链接的父级元素中查找日期文本。"""
+    node = a_tag.parent
+    for _ in range(8):
+        if node is None:
+            break
+        text = node.get_text(" ", strip=True)
+        m = _DATE_RE.search(text)
+        if m:
+            return _parse_date(m.group(1))
+        node = node.parent
+    return None
+
+
+def scrape(since: dt.datetime | None = None) -> list[dict]:
+    """爬取 Anthropic News，返回条目列表。
+
+    Args:
+        since: 只返回该时间之后的文章。None 表示不过滤。
+    """
     resp = httpx.get(_URL, follow_redirects=True, timeout=30, headers=_HEADERS)
     resp.raise_for_status()
     soup = BeautifulSoup(resp.text, "html.parser")
 
-    # 收集每个匹配链接对应的最佳标题
-    # 策略：过滤 CTA 文本 → 选最长的（最可能是真实标题）
+    # 收集每个 href 的最佳标题 + 日期
     best: dict[str, str] = {}
+    dates: dict[str, dt.datetime | None] = {}
     for a in soup.find_all("a", href=True):
         href = a["href"]
         if not _LINK_RE.match(href):
@@ -41,9 +78,13 @@ def scrape() -> list[dict]:
         prev = best.get(href, "")
         if not prev or (len(text) > len(prev) and len(text) <= 200):
             best[href] = text
+        if href not in dates:
+            dates[href] = _find_date_near(a)
 
     entries: list[dict] = []
     for href, title in best.items():
+        if since and dates.get(href) and dates[href] < since:
+            continue
         link = f"https://www.anthropic.com{href}"
         entries.append({
             "title": title,

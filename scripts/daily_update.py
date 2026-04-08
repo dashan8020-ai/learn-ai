@@ -114,7 +114,7 @@ def fetch_all(since: dt.datetime) -> list[dict]:
     for cfg in feeds:
         print(f"  {cfg['name']} ...", end=" ", flush=True)
         if cfg["type"] == "scrape":
-            items = run_scraper(cfg)
+            items = run_scraper(cfg, since=since)
         else:
             items = fetch_feed(cfg, since)
         all_entries.extend(items)
