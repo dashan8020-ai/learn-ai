@@ -10,14 +10,15 @@
 - `docs/applied/` — 应用技术（工程方法，中频更新）
 - `docs/research/` — 前沿研究（快速演进，高频更新）
 - `landscape/` — 行业全景（模型跟踪）
-- `journal/YYYY/MM/DD.md` — 每日 RSS 原始素材（脚本自动生成）
+- `journal/YYYY/MM/DD/<source>.md` — 每日 RSS 原始素材，按订阅源拆分（脚本自动生成）
 - `resources.md` — 精选资源汇总
 - `scripts/` — 自动化脚本
+- `scripts/scrapers/` — 网页爬虫（每个网站一个独立脚本）
 
 ## Markdown 规范
 
 - 所有知识文档必须有 YAML frontmatter（title, description, created, updated, tags）
-- 日报用简化 frontmatter（date, type）
+- 日报用简化 frontmatter（date, type, source, category）
 - 每次修改知识文档时更新 `updated` 字段
 - 参考资料统一放在文档末尾的 `## 参考资料` 区
 
@@ -69,11 +70,14 @@ Transformer 的核心是自注意力机制，通过 Q/K/V 矩阵计算 token 间
 ## 日更脚本
 
 - 入口：`scripts/daily_update.py`
-- 只做一件事：拉 RSS → 写 `journal/YYYY/MM/DD.md`
+- 只做一件事：拉 RSS + 爬虫 → 按订阅源写入 `journal/YYYY/MM/DD/<source>.md`
 - 依赖管理：PEP 723 inline metadata，`uv run` 自动安装
-- RSS 源配置在 `scripts/feeds.yaml`，按分类（papers / industry / community）组织
+- 所有源统一在 `scripts/feeds.yaml` 登记，按分类（papers / industry / community）组织
   - 只有 `verified: true` 的源会被拉取
-  - 添加新源后先跑 `uv run scripts/daily_update.py --hours 1` 验证，再把 `verified` 改为 `true`
+  - `type: rss`（默认）— 标准 RSS/Atom 源，配置 url 即可
+  - `type: scrape` — 网页爬虫，爬取逻辑在 `scripts/scrapers/<slug>.py` 独立维护
+  - 添加新 RSS 源后先跑 `uv run scripts/daily_update.py --hours 1` 验证，再把 `verified` 改为 `true`
+  - 添加新爬虫源：在 `scripts/scrapers/` 下新建 `<slug>.py`（暴露 `NAME`, `SLUG`, `CATEGORY`, `scrape()`），然后在 `feeds.yaml` 登记
 - 运行：`uv run scripts/daily_update.py` 或 `uv run scripts/daily_update.py --hours 48`
 
 ## LLM 整理流程（手动触发）
@@ -82,7 +86,7 @@ Transformer 的核心是自注意力机制，通过 Q/K/V 矩阵计算 token 间
 
 ### 1. 阅读当日素材
 
-打开 `journal/YYYY/MM/DD.md`，浏览今日的原始条目。
+打开 `journal/YYYY/MM/DD/` 目录，浏览各订阅源的原始条目文件。
 
 ### 2. 更新 landscape/model-tracker.md
 
@@ -116,7 +120,7 @@ Transformer 的核心是自注意力机制，通过 Q/K/V 矩阵计算 token 间
 
 让 LLM 帮忙整理时可以这样说：
 
-> 阅读 journal/2026/04/07.md 的今日素材，帮我：
+> 阅读 journal/2026/04/07/ 目录下的今日素材，帮我：
 > 1. 筛选出最值得关注的 5 条
 > 2. 判断哪些应该更新到知识文档中
 > 3. 直接帮我更新对应的文件（记得更新 frontmatter 的 updated 字段）

@@ -3,17 +3,21 @@
 # dependencies = [
 #     "feedparser>=6.0",
 #     "pyyaml>=6.0",
+#     "httpx>=0.27",
+#     "beautifulsoup4>=4.12",
 # ]
 # ///
 """
-daily_update.py — 拉取 AI 社区 RSS，写入 journal 原始素材。
+daily_update.py — 拉取 AI 社区 RSS + 网页爬虫，写入 journal 原始素材。
 
 用法:
     uv run scripts/daily_update.py            # 拉取过去 24h
     uv run scripts/daily_update.py --hours 48 # 拉取过去 48h
 
 输出:
-    journal/YYYY/MM/DD.md  — 当日原始条目，按来源分类
+    journal/YYYY/MM/DD/<source>.md  — 每个订阅源一个文件
+
+RSS 源配置在 feeds.yaml；网页爬虫在 scrapers/ 目录下，每个网站一个脚本。
 """
 
 from __future__ import annotations
@@ -22,7 +26,6 @@ import argparse
 import datetime as dt
 import html
 import io
-import os
 import re
 import sys
 import textwrap
@@ -35,6 +38,9 @@ if sys.stdout.encoding != "utf-8":
 
 import yaml
 import feedparser
+
+# 爬虫模块（每个网站一个独立脚本）
+from scrapers import run_scraper
 
 REPO_ROOT = Path(__file__).resolve().parent.parent
 FEEDS_FILE = REPO_ROOT / "scripts" / "feeds.yaml"
@@ -72,6 +78,7 @@ def fetch_feed(cfg: dict, since: dt.datetime) -> list[dict]:
                 "link": getattr(e, "link", ""),
                 "summary": summary,
                 "source": cfg["name"],
+                "slug": cfg["slug"],
                 "cat": cfg["cat"],
             })
     except Exception as exc:
@@ -90,16 +97,26 @@ def load_feeds() -> list[dict]:
         for item in items:
             if not item.get("verified", False):
                 continue
-            feeds.append({"name": item["name"], "url": item["url"], "cat": cat})
+            feeds.append({
+                "name": item["name"],
+                "slug": item["slug"],
+                "url": item.get("url", ""),
+                "cat": cat,
+                "type": item.get("type", "rss"),
+            })
     return feeds
 
 
 def fetch_all(since: dt.datetime) -> list[dict]:
+    """拉取所有 RSS 源 + 所有爬虫，返回汇总条目。"""
     feeds = load_feeds()
     all_entries: list[dict] = []
     for cfg in feeds:
         print(f"  {cfg['name']} ...", end=" ", flush=True)
-        items = fetch_feed(cfg, since)
+        if cfg["type"] == "scrape":
+            items = run_scraper(cfg)
+        else:
+            items = fetch_feed(cfg, since)
         all_entries.extend(items)
         print(f"{len(items)} 条")
     return all_entries
@@ -115,48 +132,62 @@ CAT_LABELS = {
 }
 
 
-def format_entries(entries: list[dict]) -> str:
-    by_cat: dict[str, list[dict]] = {}
+def format_source_entries(entries: list[dict]) -> str:
+    """格式化单个订阅源的条目列表。"""
+    lines: list[str] = []
     for e in entries:
-        by_cat.setdefault(e["cat"], []).append(e)
+        line = f"- **{e['title']}**"
+        if e["summary"]:
+            line += f" — {e['summary']}"
+        if e["link"]:
+            line += f"  \n  {e['link']}"
+        lines.append(line)
+    return "\n".join(lines)
 
-    sections: list[str] = []
-    for cat_key, label in CAT_LABELS.items():
-        items = by_cat.get(cat_key, [])
-        sec = f"## {label}\n\n"
-        if not items:
-            sec += "(无)\n"
-        else:
-            for e in items:
-                line = f"- [{e['source']}] **{e['title']}**"
-                if e["summary"]:
-                    line += f" — {e['summary']}"
-                if e["link"]:
-                    line += f"  \n  {e['link']}"
-                sec += line + "\n"
-        sections.append(sec)
-    return "\n".join(sections)
+
+def group_by_source(entries: list[dict]) -> dict[str, list[dict]]:
+    """按订阅源 slug 分组。"""
+    by_slug: dict[str, list[dict]] = {}
+    for e in entries:
+        by_slug.setdefault(e["slug"], []).append(e)
+    return by_slug
 
 
 # ──────────────────────────────────────────────
 # 写入
 # ──────────────────────────────────────────────
-def write_journal(date: dt.date, body: str) -> Path:
-    p = JOURNAL_DIR / str(date.year) / f"{date.month:02d}" / f"{date.day:02d}.md"
-    p.parent.mkdir(parents=True, exist_ok=True)
+def write_journal(date: dt.date, entries: list[dict]) -> list[Path]:
+    """按订阅源拆分，每个源写一个文件到 journal/YYYY/MM/DD/<slug>.md。"""
+    day_dir = JOURNAL_DIR / str(date.year) / f"{date.month:02d}" / f"{date.day:02d}"
+    day_dir.mkdir(parents=True, exist_ok=True)
 
-    content = textwrap.dedent(f"""\
-        ---
-        date: {date.isoformat()}
-        type: daily
-        ---
+    by_slug = group_by_source(entries)
+    written: list[Path] = []
 
-        # {date.isoformat()} AI 动态
+    for slug, items in by_slug.items():
+        source_name = items[0]["source"]
+        cat = items[0]["cat"]
+        cat_label = CAT_LABELS.get(cat, cat)
+        body = format_source_entries(items)
 
-    """)
-    content += body + "\n"
-    p.write_text(content, encoding="utf-8")
-    return p
+        content = textwrap.dedent(f"""\
+            ---
+            date: {date.isoformat()}
+            type: daily
+            source: {source_name}
+            category: {cat_label}
+            ---
+
+            # {source_name}
+
+        """)
+        content += body + "\n"
+
+        p = day_dir / f"{slug}.md"
+        p.write_text(content, encoding="utf-8")
+        written.append(p)
+
+    return written
 
 
 # ──────────────────────────────────────────────
@@ -178,9 +209,10 @@ def main():
         print("无新条目。")
         return
 
-    body = format_entries(entries)
-    p = write_journal(TODAY, body)
-    print(f"=> {p}")
+    paths = write_journal(TODAY, entries)
+    for p in paths:
+        print(f"  => {p}")
+    print(f"\n共写入 {len(paths)} 个文件")
 
 
 if __name__ == "__main__":
