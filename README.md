@@ -35,9 +35,9 @@
 
 | 主题 | 说明 |
 |------|------|
-| [模型动态跟踪](landscape/model-tracker.md) | 闭源/开源模型发布追踪、评估排行 |
+| [模型动态跟踪](docs/landscape/model-tracker.md) | 闭源/开源模型发布追踪、评估排行 |
 | [每日日报](journal/) | 自动生成的 AI 行业日报（按年/月/日归档） |
-| [精选资源](resources.md) | 论文、API 平台、开发工具、社区资讯 |
+| [精选资源](docs/resources.md) | 论文、API 平台、开发工具、社区资讯 |
 
 ---
 
@@ -55,19 +55,21 @@ learn-ai/
 │   │   ├── rag.md
 │   │   ├── agents.md
 │   │   └── infrastructure.md
-│   └── research/             # 前沿研究 (快速演进)
-│       ├── reasoning-and-planning.md
-│       ├── safety-and-governance.md
-│       └── emerging-frontiers.md
-├── landscape/                # 行业全景 (高频更新)
-│   └── model-tracker.md
+│   ├── research/             # 前沿研究 (快速演进)
+│   │   ├── reasoning-and-planning.md
+│   │   ├── safety-and-governance.md
+│   │   └── emerging-frontiers.md
+│   ├── products/             # 产品档案
+│   ├── landscape/            # 行业全景 (高频更新)
+│   │   └── model-tracker.md
+│   └── resources.md          # 精选资源汇总
 ├── journal/                  # 每日动态 (自动生成)
 │   └── YYYY/MM/DD.md
-├── resources.md              # 精选资源汇总
 ├── scripts/
 │   └── daily_update.py       # 日更脚本
+├── mkdocs.yml                # GitHub Pages 站点配置
 └── .github/workflows/
-    └── daily-update.yml      # GitHub Actions 定时任务
+    └── deploy-pages.yml      # GitHub Pages 自动部署
 ```
 
 ---

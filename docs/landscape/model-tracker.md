@@ -61,7 +61,7 @@ tags: [models, landscape, tracker]
 
 ## 评估基准
 
-> 详细的基准说明见 [大语言模型 § 评估基准](../docs/foundations/large-language-models.md#5-评估基准)。
+> 详细的基准说明见 [大语言模型 § 评估基准](../foundations/large-language-models.md#5-评估基准)。
 
 ## 参考资料
 

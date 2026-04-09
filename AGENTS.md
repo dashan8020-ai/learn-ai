@@ -15,7 +15,7 @@
 3. **应用型内容的写法**：先写内化的技术方案（它解决了什么技术问题、用了什么方法），再写为特定目标采用的亮眼工程细节（巧妙的系统设计、性能优化、取舍决策）。
 4. **知识导向，非实现导向**：记录"这个东西为什么值得知道"，而不是"怎么用它"。比如一个 GitHub 热门 repo，应该提炼它在技术上出彩的部分（新颖的架构思路、解决了什么难题、关键的工程决策），而不是搬运 README。
 
-### 产品档案（docs/products/）写法指南
+### 产品档案（docs/coding-agents/）写法指南
 
 产品文档应聚焦于**技术区分度**：
 
@@ -40,12 +40,22 @@
 - `docs/foundations/` — 基础理论（稳定知识，低频更新）
 - `docs/applied/` — 应用技术（工程方法，中频更新）
 - `docs/research/` — 前沿研究（快速演进，高频更新）
-- `docs/products/` — 产品档案（每个产品一个文件，聚焦形态、技术底座和核心能力）
-- `landscape/` — 行业全景（模型跟踪）
+- `docs/coding-agents/` — 编码 Agent 产品档案（每个产品一个文件，聚焦技术底座和区分度）
+- `docs/landscape/` — 行业全景（模型跟踪）
 - `journal/YYYY/MM/DD/<source>.md` — 每日 RSS 原始素材，按订阅源拆分（脚本自动生成）
-- `resources.md` — 精选资源汇总
+- `docs/resources.md` — 精选资源汇总
 - `scripts/` — 自动化脚本
 - `scripts/scrapers/` — 网页爬虫（每个网站一个独立脚本）
+
+### 新增品类目录的约定
+
+当出现一个新的产品品类需要收录多个产品档案时：
+
+1. 在 `docs/` 下新建**扁平的品类目录**，命名格式 `<品类名>/`（如 `docs/search-agents/`、`docs/data-tools/`）
+2. 不嵌套子目录（不要 `docs/products/coding-agents/`），保持一层
+3. 品类目录内每个产品一个 `.md` 文件，写法同上述产品档案指南
+4. 在本节目录约定中登记新目录
+5. 如有品类共性（所有同类产品都具备的通用能力），在 `docs/applied/` 下写一篇品类概述文档，各产品档案不重复
 
 ## Markdown 规范
 
@@ -120,7 +130,7 @@ Transformer 的核心是自注意力机制，通过 Q/K/V 矩阵计算 token 间
 
 打开 `journal/YYYY/MM/DD/` 目录，浏览各订阅源的原始条目文件。
 
-### 2. 更新 landscape/model-tracker.md
+### 2. 更新 docs/landscape/model-tracker.md
 
 如果有新模型发布或重大更新：
 - 在对应的闭源/开源表格中添加新行
@@ -146,9 +156,9 @@ Transformer 的核心是自注意力机制，通过 Q/K/V 矩阵计算 token 间
 | 安全/治理/可解释性 | `docs/research/safety-and-governance.md` |
 | 其他前沿方向 | `docs/research/emerging-frontiers.md` |
 
-### 4. 更新 resources.md
+### 4. 更新 docs/resources.md
 
-如果发现值得长期收藏的论文、工具或博客，添加到 `resources.md` 对应分类下。
+如果发现值得长期收藏的论文、工具或博客，添加到 `docs/resources.md` 对应分类下。
 
 ### 筛选标准
 

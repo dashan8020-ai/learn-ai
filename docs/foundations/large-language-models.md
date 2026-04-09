@@ -38,7 +38,7 @@ tags: [llm, scaling-laws, moe]
 
 ## 2. 主流模型
 
-> 完整的模型列表与最新发布动态见 [模型动态跟踪](../../landscape/model-tracker.md)。
+> 完整的模型列表与最新发布动态见 [模型动态跟踪](../landscape/model-tracker.md)。
 
 当前 LLM 市场由 OpenAI、Anthropic、Google 三家闭源厂商领跑，开源生态以 Meta Llama、DeepSeek、Mistral、Qwen 为代表。
 
