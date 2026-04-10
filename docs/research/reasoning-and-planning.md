@@ -2,7 +2,7 @@
 title: 推理与规划
 description: 推理模型、test-time compute scaling、过程奖励模型等前沿方向。
 created: 2026-04-07
-updated: 2026-04-09
+updated: 2026-04-10
 tags: [reasoning, test-time-compute, prm, o1, deepseek-r1]
 review:
 ---
@@ -66,6 +66,28 @@ PRM:        评估每个推理步骤的正确性
 - 将熵的下降趋势作为 reward，鼓励模型生成"越想越清楚"的推理链，惩罚"越想越混乱"的无效推理
 - 本质是为推理过程建立了一个无需外部标注的自监督质量信号
 
+**SFT 泛化的条件性（2026.4）**
+
+"SFT 只会记忆、RL 才能泛化"是 LLM 后训练的主流叙事。Ren et al.[^ren-2026-sft] 用 long-CoT 监督重新审视这一论断，发现跨域泛化**并非缺失，而是有条件的**：
+
+- **优化动力学**：跨域性能先降后升（dip-and-recovery），短训练的 checkpoint 会低估泛化能力
+- **数据质量**：低质量解答普遍伤害泛化；经验证的 long-CoT trace 则带来稳定的跨域增益
+- **模型能力**：强模型能内化可迁移的程序性模式（如 backtracking），弱模型仅模仿表面冗长
+- **不对称性**：推理能力提升的同时安全性下降——问题从"SFT 能否泛化"变为"在什么条件下泛化、代价是什么"
+
+**StepFlow: 修复推理信息流（2026.4, ACL 2026）**
+
+Xu et al.[^xu-2026-stepflow] 提出 Step-Saliency 分析工具，将注意力-梯度分数池化为步骤间信息流图，发现两类反复出现的失败模式：
+
+- **Shallow Lock-in**：浅层过度聚焦当前步骤，几乎不利用早期上下文
+- **Deep Decay**：深层对思考段的显著性逐渐衰减，总结段越来越多地自注意
+
+基于此提出 StepFlow——无需重训练的推理时干预：在浅层用 Odds-Equal Bridge 校正显著性模式，在深层用 Step Momentum Injection 注入步骤级残差。在数学、科学、代码任务上提升了多个推理模型的准确率。
+
+**SELFDOUBT: 单次推理的不确定性量化（2026.4）**
+
+推理模型的不确定性估计一直受限于成本：采样方法需要多次推理，单次探针方法又不够可靠。SELFDOUBT[^selfdoubt-2026] 提出 Hedge-to-Verify Ratio——利用推理链中犹豫/对冲表达与验证表达的比率作为不确定性信号，仅需一次推理即可估计置信度。
+
 ---
 
 ## 参考资料
@@ -73,3 +95,6 @@ PRM:        评估每个推理步骤的正确性
 - Lightman et al., "Let's Verify Step by Step" (Process Reward Models), 2023 - [arXiv:2305.20050](https://arxiv.org/abs/2305.20050)
 - QED-Nano: Teaching a Tiny Model to Prove Hard Theorems - [arXiv:2604.04898](https://arxiv.org/abs/2604.04898)
 [^etr-2026]: "ETR: Entropy Trend Reward for Efficient Chain-of-Thought Reasoning". 2026. https://arxiv.org/abs/2604.05355
+[^ren-2026-sft]: Ren et al. "Rethinking Generalization in Reasoning SFT". 2026. https://arxiv.org/abs/2604.06628
+[^xu-2026-stepflow]: Xu et al. "Reasoning Fails Where Step Flow Breaks". ACL 2026. https://arxiv.org/abs/2604.06695
+[^selfdoubt-2026]: "SELFDOUBT: Uncertainty Quantification for Reasoning LLMs via the Hedge-to-Verify Ratio". 2026. https://arxiv.org/abs/2604.06389
