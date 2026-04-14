@@ -19,3 +19,13 @@ build/
 
 # Generated reference docs (can be regenerated from source PDFs)
 reference/mythos-system-card/
+
+# Playwright
+.playwright/
+.playwright-cli/
+
+# Task tracking
+todo.md
+
+# Devin local config
+.devin/

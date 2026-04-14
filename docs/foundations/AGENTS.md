@@ -10,6 +10,7 @@
 | `kv-cache.md` | KV Cache 与推理优化 |
 | `mamba-and-ssm.md` | SSM / Mamba / 替代架构 |
 | `multimodal-ai.md` | 多模态 AI |
+| `representation-learning.md` | 从规则到表示学习 |
 
 ## 收录哪些内容
 
@@ -17,6 +18,7 @@
 - KV Cache、推理优化（GQA、Prefill/Decode、压缩权衡）→ `kv-cache.md`
 - SSM / Mamba / 替代架构 → `mamba-and-ssm.md`
 - 多模态数据特征与技术路线 → `multimodal-ai.md`
+- ML 范式演进（规则系统 → 特征工程 → 表示学习）→ `representation-learning.md`
 
 ## 不收录
 

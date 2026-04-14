@@ -81,6 +81,7 @@ nav:
     - KV Cache 与推理优化: foundations/kv-cache.md
     - Mamba 与 SSM: foundations/mamba-and-ssm.md
     - 多模态 AI: foundations/multimodal-ai.md
+    - 从规则到表示学习: foundations/representation-learning.md
   - 应用技术:
     - applied/index.md
     - AI Agent 智能体: applied/ai-agents.md
@@ -98,6 +99,7 @@ nav:
   - 前沿研究:
     - research/index.md
     - 推理与规划: research/reasoning-and-planning.md
+    - 可解释性: research/interpretability.md
     - AI 安全与治理: research/safety-and-governance.md
     - 新兴前沿方向: research/emerging-frontiers.md
   - 模型档案:

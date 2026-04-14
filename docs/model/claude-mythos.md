@@ -9,7 +9,7 @@ review:
 
 ## System Card
 
-> 原文：Anthropic, *System Card: Claude Mythos Preview*, 2026-04-07, 245 页 PDF[^system-card]。本文是结构化中文摘要，保留核心技术细节；关于 Project Glasswing 的背景参见 [AI 安全与治理 §2.3](../research/safety-and-governance.md#23-project-glasswing-claude-mythos20264)。
+> 原文：Anthropic, *System Card: Claude Mythos Preview*, 2026-04-07, 245 页 PDF[^system-card]。本文是结构化中文摘要，保留核心技术细节；关于 Project Glasswing 的背景参见 [AI 安全与治理 §1.3](../research/safety-and-governance.md#13-project-glasswing-claude-mythos20264)。
 
 ---
 
